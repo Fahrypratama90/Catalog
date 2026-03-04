@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Detail | Elite Universe</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #8a70d6;
+            --secondary: #ff70a6;
+            --bg: #fdfbff;
+            --text: #1d1d1f;
+            --gray: #a1a1a8;
+            --grad: linear-gradient(-45deg, #8a70d6, #ff70a6, #b39cd0, #ff9eb5);
+        }
+
+        @keyframes gradMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        body { background: var(--bg); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text); overflow-x: hidden; }
+
+        /* --- CUSTOM TOAST (ELITE NOTIFICATION) --- */
+        #toast {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: rgba(18, 18, 18, 0.95); color: white; padding: 18px 30px;
+            border-radius: 30px; font-weight: 800; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 15px; z-index: 10000;
+            backdrop-filter: blur(10px); box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        #toast.show { top: 30px; }
+        #toast i { color: var(--secondary); animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+        /* --- HEADER NAVIGATION --- */
+        .nav-top {
+            padding: 25px 24px; display: flex; justify-content: space-between; align-items: center;
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+        }
+        .btn-circle {
+            width: 55px; height: 55px; background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-radius: 22px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05); color: var(--text);
+            text-decoration: none; font-size: 1.1rem; border: 1px solid rgba(255,255,255,0.4);
+            transition: 0.3s;
+        }
+        .btn-circle:active { transform: scale(0.9); }
+        .fav.active { color: var(--secondary); }
+
+        /* --- HERO IMAGE SECTION --- */
+        .hero-container {
+            width: 100%; height: 520px; position: relative;
+            background: #f4f1ff; overflow: hidden;
+            border-bottom-left-radius: 65px; border-bottom-right-radius: 65px;
+        }
+        #pImg { width: 100%; height: 100%; object-fit: cover; animation: zoomIn 1s ease-out; }
+        @keyframes zoomIn { from { transform: scale(1.2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .hero-container::after {
+            content: ''; position: absolute; bottom: 0; width: 100%; height: 40%;
+            background: linear-gradient(transparent, rgba(138, 112, 214, 0.1));
+        }
+
+        /* --- CONTENT SECTION --- */
+        .content { padding: 40px 24px 180px; }
+        .badge-elite {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--grad); background-size: 200%; color: #fff;
+            padding: 10px 18px; border-radius: 15px; font-weight: 800; font-size: 0.75rem;
+            margin-bottom: 20px; animation: gradMove 4s infinite;
+        }
+        
+        h1 { font-size: 2.8rem; font-weight: 800; letter-spacing: -2px; line-height: 1.1; margin-bottom: 10px; }
+        .price-tag { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin-bottom: 25px; display: block; }
+        .desc-box { margin-top: 20px; }
+        .desc-title { font-weight: 800; font-size: 1.1rem; margin-bottom: 10px; }
+        .desc-text { font-weight: 600; color: var(--gray); line-height: 1.8; font-size: 0.95rem; }
+
+        /* --- BOTTOM ACTION BAR --- */
+        .bottom-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(25px);
+            padding: 25px 24px 45px;
+            border-top-left-radius: 50px; border-top-right-radius: 50px;
+            display: flex; gap: 15px; z-index: 2000;
+            box-shadow: 0 -15px 40px rgba(0,0,0,0.03);
+        }
+        .btn-add-cart {
+            width: 75px; height: 75px; background: #f0ebff; color: var(--primary);
+            border: none; border-radius: 25px; font-size: 1.5rem; cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-add-cart:active { transform: scale(0.9); background: var(--primary); color: #fff; }
+        
+        .btn-buy-now {
+            flex: 1; height: 75px; background: var(--text); color: #fff; border: none;
+            border-radius: 25px; font-weight: 800; font-size: 1.1rem; cursor: pointer;
+            transition: 0.3s; position: relative; overflow: hidden;
+        }
+        .btn-buy-now:active { transform: scale(0.98); opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <div id="toast">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span id="toastMsg">Elite Selection Added!</span>
+    </div>
+
+    <div class="nav-top">
+        <a href="main.html" class="btn-circle"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="btn-circle fav" onclick="toggleFav(this)"><i class="fa-solid fa-heart"></i></div>
+    </div>
+
+    <div class="hero-container">
+        <img src="" id="pImg" alt="Elite Item">
+    </div>
+
+    <div class="content">
+        <div class="badge-elite"><i class="fa-solid fa-crown"></i> ELITE SELECTION 2026</div>
+        <h1 id="pName">Loading...</h1>
+        <span class="price-tag" id="pPrice">Rp 0</span>
+        
+        <div class="desc-box">
+            <p class="desc-title">Description</p>
+            <p class="desc-text">
+                Mahakarya dari Elite Universe yang dirancang khusus untuk Anda yang mengutamakan kualitas tinggi. 
+                Produk ini menggunakan material premium dengan teknologi terbaru untuk memastikan kenyamanan 
+                dan gaya hidup prestisius Anda tetap terjaga.
+            </p>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <button class="btn-add-cart" onclick="addToBag()"><i class="fa-solid fa-bag-shopping"></i></button>
+        <button class="btn-buy-now" onclick="buyNow()">Buy Now!</button>
+    </div>
+
+    <script>
+        // Database 10 Produk
+        const dataProd = [
+            { id: 1, name: "Aero Max V.01", price: 2400000, img: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&q=80&w=400" },
+            { id: 2, name: "Zenith Watch", price: 4100000, img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=400" },
+            { id: 3, name: "Vapor Pods G3", price: 1250000, img: "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?auto=format&fit=crop&q=80&w=400" },
+            { id: 4, name: "Lumina Lens", price: 900000, img: "gambar1.png" },
+            { id: 5, name: "Apex Stealth", price: 3200000, img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&q=80&w=400" },
+            { id: 6, name: "Nexus Cube", price: 550000, img: "https://images.unsplash.com/photo-1585298723682-7115561c51b7?auto=format&fit=crop&q=80&w=400" },
+            { id: 7, name: "Horizon Rim", price: 1850000, img: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&q=80&w=400" },
+            { id: 8, name: "Sonic Wave", price: 2700000, img: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&q=80&w=400" },
+            { id: 9, name: "Vision Neo", price: 5600000, img: "https://images.unsplash.com/photo-1508974239320-0a029497e820?auto=format&fit=crop&q=80&w=400" },
+            { id: 10, name: "Nova Gear", price: 1100000, img: "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?auto=format&fit=crop&q=80&w=400" }
+        ];
+
+        const params = new URLSearchParams(window.location.search);
+        const prodId = parseInt(params.get('id'));
+        const activeItem = dataProd.find(x => x.id === prodId);
+
+        if (activeItem) {
+            document.getElementById('pName').innerText = activeItem.name;
+            document.getElementById('pPrice').innerText = "Rp " + activeItem.price.toLocaleString();
+            document.getElementById('pImg').src = activeItem.img;
+        }
+
+        function showEliteToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 2500);
+        }
+
+        function toggleFav(el) {
+            el.classList.toggle('active');
+            if(el.classList.contains('active')) showEliteToast("Added to Wishlist!");
+        }
+
+        function addToBag() {
+            let bag = JSON.parse(localStorage.getItem('cart')) || [];
+            bag.push(activeItem);
+            localStorage.setItem('cart', JSON.stringify(bag));
+            showEliteToast("Elite item added to Bag!");
+        }
+
+        // PERBAIKAN: Fungsi Buy Now langsung ke Checkout
+        function buyNow() {
+            let bag = JSON.parse(localStorage.getItem('cart')) || [];
+            // Tambahkan item ini ke keranjang terlebih dahulu
+            bag.push(activeItem);
+            localStorage.setItem('cart', JSON.stringify(bag));
+            
+            // Langsung arahkan ke halaman checkout
+            window.location.href = 'checkout.html';
+        }
+    </script>
+</body>
+</html>

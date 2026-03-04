@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog | Account</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { background: #fdfbff; font-family: 'Plus Jakarta Sans', sans-serif; padding: 50px 24px; text-align: center; }
+        .avatar { 
+            width: 110px; height: 110px; background: #d8ccff; border-radius: 40px; 
+            margin: 0 auto 20px; display: flex; justify-content: center; align-items: center;
+            font-size: 2.5rem; color: #8a70d6; transform: rotate(-5deg);
+        }
+        .menu { text-align: left; margin-top: 40px; }
+        .opt { 
+            padding: 20px; background: #fff; margin-bottom: 12px; border-radius: 20px; 
+            display: flex; justify-content: space-between; align-items: center; font-weight: 600;
+        }
+        .logout { color: #ff70a6; }
+    </style>
+</head>
+<body>
+    <div class="avatar"><i class="fa-solid fa-user-ninja"></i></div>
+    <h2 style="font-weight: 800;">Fahry Elite</h2>
+    <p style="color: #a1a1a8;">Premium Member since 2026</p>
+
+    <div class="menu">
+        <div class="opt">Order History <i class="fa-solid fa-chevron-right"></i></div>
+        <div class="opt">My Vouchers <i class="fa-solid fa-chevron-right"></i></div>
+        <div class="opt logout" onclick="window.location.href='login.html'">Logout Account <i class="fa-solid fa-right-from-bracket"></i></div>
+    </div>
+</body>
+</html>

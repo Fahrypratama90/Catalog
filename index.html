@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog | Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            background: #fdfbff; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            margin: 0; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Text Catalog Gradasi */
+        .brand-name {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #8a70d6 0%, #ff70a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        /* Circle Loading Tipis & Bagus */
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(138, 112, 214, 0.1); /* Bagian yang transparan/tipis */
+            border-top: 2px solid #8a70d6; /* Bagian yang muter */
+            border-radius: 50%;
+            animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        /* Animasi Text */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Animasi Putar */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Text Loading Kecil di Bawah */
+        .status {
+            margin-top: 15px;
+            font-size: 0.7rem;
+            color: #a1a1a8;
+            letter-spacing: 3px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="brand-name">CATALOG.</div>
+    
+    <div class="loader"></div>
+    
+    <div class="status">Initializing</div>
+
+    <script>
+        // Transisi ke login setelah 3 detik agar animasi berasa
+        setTimeout(() => { 
+            window.location.href = 'login.html'; 
+        }, 3000);
+    </script>
+</body>
+</html>

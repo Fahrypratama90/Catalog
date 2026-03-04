@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Elite Universe | Checkout</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #8a70d6;
+            --secondary: #ff70a6;
+            --bg: #fdfbff;
+            --text: #1d1d1f;
+            --gray: #a1a1a8;
+            /* Gradasi Diam (Tanpa Animasi Gerak) */
+            --grad-static: linear-gradient(135deg, #8a70d6 0%, #ff70a6 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        body { background: var(--bg); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text); overflow-x: hidden; }
+
+        /* --- Header --- */
+        .header { padding: 30px 24px; display: flex; align-items: center; gap: 20px; }
+        .btn-back {
+            width: 50px; height: 50px; background: #fff; border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04); color: var(--text); 
+            text-decoration: none; transition: 0.3s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .btn-back:active { transform: scale(0.85); background: #f0f0f0; }
+        .header h2 { font-weight: 800; font-size: 1.6rem; letter-spacing: -1px; }
+
+        .container { padding: 0 24px 220px; max-width: 600px; margin: 0 auto; }
+        h3 { font-weight: 800; font-size: 1.1rem; margin: 30px 0 15px; display: flex; align-items: center; gap: 10px; }
+
+        /* --- Order Summary --- */
+        .order-card {
+            background: #fff; border-radius: 28px; padding: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.02);
+            border: 1px solid rgba(138, 112, 214, 0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .item-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px dotted #f0f0f0; }
+        .item-row:last-child { border-bottom: none; }
+        .item-name { font-weight: 700; color: var(--text); }
+        .item-price { font-weight: 800; color: var(--primary); }
+
+        /* --- Payment Grid (Rapi & Interaktif) --- */
+        .payment-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+
+        .pay-option {
+            background: #fff; padding: 20px; border-radius: 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            border: 2px solid #f2f2f7; cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Animasi saat diklik/aktif */
+        .pay-option.active {
+            border-color: var(--primary);
+            background: #fbfaff;
+            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(138, 112, 214, 0.12);
+        }
+
+        .pay-info { display: flex; align-items: center; gap: 16px; }
+
+        .pay-icon {
+            width: 52px; height: 52px; background: #f4f1ff;
+            color: var(--primary); border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; transition: 0.3s;
+        }
+
+        .pay-option.active .pay-icon {
+            background: var(--grad-static);
+            color: #fff;
+            box-shadow: 0 8px 15px rgba(138, 112, 214, 0.3);
+        }
+
+        .pay-label b { font-weight: 800; font-size: 1rem; display: block; }
+        .pay-label span { font-size: 0.8rem; color: var(--gray); font-weight: 600; }
+        
+        /* Custom Radio Button */
+        .pay-radio {
+            width: 24px; height: 24px; border: 2px solid #e5e5ea;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; transition: 0.3s;
+        }
+
+        .pay-option.active .pay-radio {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .pay-radio::after {
+            content: ''; width: 10px; height: 10px;
+            background: #fff; border-radius: 50%;
+            transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .pay-option.active .pay-radio::after { transform: scale(1); }
+
+        /* --- Bottom Bar --- */
+        .bottom-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px);
+            padding: 25px 24px 45px;
+            border-top-left-radius: 45px; border-top-right-radius: 45px;
+            box-shadow: 0 -15px 40px rgba(0,0,0,0.03); z-index: 100;
+        }
+        
+        .total-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .total-label { font-weight: 700; color: var(--gray); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+        .total-amount { font-weight: 800; font-size: 1.6rem; color: var(--text); }
+
+        .btn-checkout {
+            width: 100%; background: var(--text); color: #fff; border: none;
+            padding: 22px; border-radius: 25px; font-weight: 800; font-size: 1.1rem; 
+            cursor: pointer; transition: 0.3s;
+        }
+        .btn-checkout:active { transform: scale(0.95); opacity: 0.9; }
+
+        /* --- Success Screen (Animasi Baru) --- */
+        #success-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 9999; display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .circle-check {
+            width: 100px; height: 100px; background: var(--grad-static); 
+            border-radius: 35px; display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 3rem; transform: scale(0); transition: 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.5);
+            box-shadow: 0 20px 40px rgba(138, 112, 214, 0.2);
+        }
+        .status-text { font-size: 1.8rem; font-weight: 800; margin-top: 25px; opacity: 0; transform: translateY(10px); transition: 0.5s; }
+        
+        .pop-in { transform: scale(1) !important; }
+        .show-text { opacity: 1 !important; transform: translateY(0) !important; }
+        
+        .btn-done {
+            margin-top: 40px; padding: 18px 40px; background: var(--text);
+            color: #fff; border-radius: 20px; text-decoration: none; font-weight: 800;
+            opacity: 0; transform: translateY(10px); transition: 0.5s;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="javascript:history.back()" class="btn-back"><i class="fa-solid fa-chevron-left"></i></a>
+        <h2>Checkout</h2>
+    </div>
+
+    <div class="container">
+        <h3><i class="fa-solid fa-receipt"></i> Summary</h3>
+        <div class="order-card" id="orderList"></div>
+
+        <h3><i class="fa-solid fa-credit-card"></i> Payment</h3>
+        <div class="payment-grid">
+            <div class="pay-option active" onclick="selectPay(this)">
+                <div class="pay-info">
+                    <div class="pay-icon"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="pay-label">
+                        <b>E-Wallet Premium</b>
+                        <span>Dana, GoPay, OVO</span>
+                    </div>
+                </div>
+                <div class="pay-radio"></div>
+            </div>
+
+            <div class="pay-option" onclick="selectPay(this)">
+                <div class="pay-info">
+                    <div class="pay-icon"><i class="fa-solid fa-building-columns"></i></div>
+                    <div class="pay-label">
+                        <b>Bank Transfer</b>
+                        <span>BCA, Mandiri, BNI</span>
+                    </div>
+                </div>
+                <div class="pay-radio"></div>
+            </div>
+
+            <div class="pay-option" onclick="selectPay(this)">
+                <div class="pay-icon"><i class="fa-solid fa-qrcode"></i></div>
+                <div class="pay-label">
+                    <b>QRIS Instant</b>
+                    <span>Scan & Pay Securely</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="total-container">
+            <span class="total-label">Total Payment</span>
+            <span class="total-amount" id="grandTotal">Rp 0</span>
+        </div>
+        <button class="btn-checkout" onclick="prosesCheckout()">Pay Securely</button>
+    </div>
+
+    <div id="success-overlay">
+        <div class="circle-check" id="circle"><i class="fa-solid fa-check"></i></div>
+        <div class="status-text" id="statusText">Elite Success!</div>
+        <a href="main.html" class="btn-done" id="btnDone">Back to Home</a>
+    </div>
+
+    <script>
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const orderList = document.getElementById('orderList');
+        const grandTotalTxt = document.getElementById('grandTotal');
+        
+        function renderSummary() {
+            if(cart.length === 0) {
+                orderList.innerHTML = "<p style='text-align:center; color:var(--gray);'>Bag is empty</p>";
+                return;
+            }
+            let total = 0;
+            orderList.innerHTML = cart.map(item => {
+                total += item.price;
+                return `<div class="item-row"><span class="item-name">${item.name}</span><span class="item-price">Rp ${item.price.toLocaleString()}</span></div>`;
+            }).join('');
+            grandTotalTxt.innerText = "Rp " + total.toLocaleString();
+        }
+
+        renderSummary();
+
+        function selectPay(el) {
+            document.querySelectorAll('.pay-option').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function prosesCheckout() {
+            if(cart.length === 0) return;
+            const overlay = document.getElementById('success-overlay');
+            const circle = document.getElementById('circle');
+            const text = document.getElementById('statusText');
+            const btn = document.getElementById('btnDone');
+
+            overlay.style.display = 'flex';
+            setTimeout(() => circle.classList.add('pop-in'), 100);
+            setTimeout(() => text.classList.add('show-text'), 600);
+            setTimeout(() => {
+                btn.classList.add('show-text');
+                localStorage.removeItem('cart');
+            }, 1100);
+        }
+    </script>
+</body>
+</html>

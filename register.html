@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Join Elite | Register</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #8a70d6;
+            --secondary: #ff70a6;
+            --bg: #fdfbff;
+            --text-main: #1d1d1f;
+            --text-gray: #a1a1a8;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body { 
+            background: var(--bg); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Background Decor */
+        .blob {
+            position: absolute; width: 350px; height: 350px;
+            background: var(--primary); filter: blur(120px);
+            opacity: 0.1; z-index: -1; animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-30px, 30px) scale(1.1); }
+        }
+
+        /* Card Styling */
+        .register-card {
+            width: 90%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 40px 30px;
+            border-radius: 45px;
+            border: 2px solid var(--white);
+            box-shadow: 0 30px 60px rgba(138, 112, 214, 0.12);
+            text-align: center;
+            animation: slideUp 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-gray);
+            margin-bottom: 35px;
+        }
+
+        /* Input Styling */
+        .input-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-left: 18px;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 18px 25px;
+            border-radius: 22px;
+            border: 2px solid transparent;
+            background: var(--white);
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+            outline: none;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 12px 25px rgba(138, 112, 214, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Button Styling */
+        .btn-register {
+            width: 100%;
+            padding: 20px;
+            margin-top: 15px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: var(--white);
+            border: none;
+            border-radius: 22px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 15px 30px rgba(138, 112, 214, 0.3);
+            transition: 0.3s;
+        }
+
+        .btn-register:active {
+            transform: scale(0.95);
+        }
+
+        .footer-links {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-gray);
+        }
+
+        .footer-links a {
+            color: var(--primary);
+            text-decoration: none;
+            margin-left: 5px;
+        }
+
+        /* Message Box */
+        .status-msg {
+            padding: 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .error { background: #fff1f1; color: #ff4d4d; border: 1px solid #ffeded; }
+        .success { background: #f1fff6; color: #2ecc71; border: 1px solid #e8fdf0; }
+
+    </style>
+</head>
+<body>
+
+    <div class="blob" style="top: -10%; left: -10%;"></div>
+    <div class="blob" style="bottom: -10%; right: -10%; background: var(--secondary);"></div>
+
+    <div class="register-card">
+        <h1>Create Account</h1>
+        <p class="subtitle">Join the elite world of Universe</p>
+
+        <div id="msgBox" class="status-msg"></div>
+
+        <form id="regForm" onsubmit="event.preventDefault(); handleSignUp();">
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="regName" placeholder="Your Name" required>
+            </div>
+
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="regEmail" placeholder="name@example.com" required>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="regPass" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn-register" id="btnReg">Register Now</button>
+        </form>
+
+        <div class="footer-links">
+            Already have an account? <a href="login.html">Sign In</a>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGIKA DATABASE (IndexedDB) ---
+        let db;
+        const dbReq = indexedDB.open("EliteUniverseDB", 1);
+
+        dbReq.onupgradeneeded = (e) => {
+            db = e.target.result;
+            if (!db.objectStoreNames.contains("users")) {
+                db.createObjectStore("users", { keyPath: "email" });
+            }
+        };
+
+        dbReq.onsuccess = (e) => { db = e.target.result; };
+        dbReq.onerror = () => { console.error("Database failed to load"); };
+
+        function handleSignUp() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPass').value;
+            const msgBox = document.getElementById('msgBox');
+            const btn = document.getElementById('btnReg');
+
+            // Reset Message
+            msgBox.style.display = 'none';
+
+            if (!name || !email || !pass) {
+                showStatus("Please fill all fields!", "error");
+                return;
+            }
+
+            const transaction = db.transaction(["users"], "readwrite");
+            const store = transaction.objectStore("users");
+
+            const newUser = { name, email, pass };
+            const request = store.add(newUser);
+
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            request.onsuccess = () => {
+                showStatus("Success! Account created.", "success");
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+            };
+
+            request.onerror = () => {
+                showStatus("Email already registered!", "error");
+                btn.innerText = "Register Now";
+                btn.disabled = false;
+            };
+        }
+
+        function showStatus(text, type) {
+            const msgBox = document.getElementById('msgBox');
+            msgBox.innerText = text;
+            msgBox.className = `status-msg ${type}`;
+            msgBox.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

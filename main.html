@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Elite Universe | Premium Catalog</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #8a70d6;
+            --secondary: #ff70a6;
+            --bg: #fdfbff;
+            --card: #ffffff;
+            --text: #1d1d1f;
+            --gray: #a1a1a8;
+            --grad: linear-gradient(-45deg, #8a70d6, #ff70a6, #b39cd0, #ff9eb5);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes gradMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes starRotate {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(90deg); }
+            100% { transform: scale(1) rotate(180deg); }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        body { background: var(--bg); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text); overflow-x: hidden; }
+
+        /* --- AI SEARCH OVERLAY --- */
+        #searchOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(12px);
+            z-index: 9000; display: none; align-items: center; justify-content: center;
+        }
+        .star-4 {
+            width: 70px; height: 70px; background: var(--grad); background-size: 300%;
+            clip-path: polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%);
+            animation: gradMove 3s infinite, starRotate 2s infinite ease-in-out;
+        }
+
+        /* --- VIEWS --- */
+        .view { display: none; padding: 40px 24px 220px; animation: slideUp 0.5s ease-out; }
+        .view.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .main-title { font-size: 2.8rem; font-weight: 800; letter-spacing: -2px; line-height: 1.1; margin-bottom: 30px; }
+        .main-title span { background: var(--grad); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradMove 4s infinite; }
+
+        /* --- GRID 10 PRODUCTS --- */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .p-card { background: var(--card); border-radius: 32px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03); cursor: pointer; }
+        .p-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+        .p-info { padding: 18px; }
+
+        /* --- CUSTOM ELITE MODAL (NO LOCALHOST) --- */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 10000; }
+        .modal-content { background: #fff; padding: 35px; border-radius: 40px; text-align: center; width: 85%; max-width: 350px; animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { from { transform: scale(0.8); } to { transform: scale(1); } }
+        .modal-input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #f0ebff; margin: 15px 0; font-family: inherit; font-weight: 700; outline: none; }
+        .btn-elite { background: var(--text); color: #fff; padding: 15px; border-radius: 20px; border: none; font-weight: 800; width: 100%; cursor: pointer; margin-top: 10px; }
+
+        /* --- PROFILE --- */
+        .profile-card { background: var(--grad); background-size: 300%; animation: gradMove 6s infinite; padding: 40px 20px; border-radius: 40px; color: #fff; text-align: center; margin-bottom: 30px; }
+        .menu-list { background: #fff; border-radius: 35px; padding: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+        .menu-item { display: flex; align-items: center; gap: 15px; padding: 18px 20px; border-radius: 25px; cursor: pointer; }
+        .menu-item i { width: 45px; height: 45px; background: #f4f1ff; color: var(--primary); border-radius: 15px; display: flex; align-items: center; justify-content: center; }
+
+        /* --- NAVIGATION --- */
+        nav { position: fixed; bottom: 25px; left: 24px; right: 24px; background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 20px; border-radius: 35px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 5000; }
+        .nav-link { font-size: 1.5rem; color: #d1d1d6; transition: 0.3s; }
+        .nav-link.active { color: var(--primary); transform: translateY(-5px); }
+    </style>
+</head>
+<body>
+
+    <div id="searchOverlay"><div class="star-4"></div></div>
+
+    <div class="modal" id="eliteModal">
+        <div class="modal-content" id="modalBody">
+            </div>
+    </div>
+
+    <section id="homeView" class="view active">
+        <p style="font-weight:800; color:var(--primary);">Welcome back,</p>
+        <h1 class="main-title"><span id="displayUser">Fahry</span> <br>Catalog</h1>
+        
+        <div style="background:#fff; padding:20px; border-radius:28px; display:flex; align-items:center; gap:15px; margin-bottom:35px; box-shadow:0 10px 30px rgba(0,0,0,0.03);">
+            <i class="fa-solid fa-magnifying-glass" style="color:var(--primary);"></i>
+            <input type="text" id="searchInp" placeholder="Search elite items..." oninput="doSearch()" style="border:none; outline:none; width:100%; font-weight:700; font-family:inherit; font-size:1rem;">
+        </div>
+
+        <div class="grid" id="mainGrid"></div>
+    </section>
+
+    <section id="cartView" class="view">
+        <h1 class="main-title">My <span>Bag</span></h1>
+        <div id="cartList"></div>
+        <div id="checkoutBar" style="position:fixed; bottom:115px; left:24px; right:24px; background:#121212; padding:22px; border-radius:32px; display:none; justify-content:space-between; align-items:center; z-index:1000;">
+            <div style="color:#fff;">
+                <p style="font-size:0.7rem; opacity:0.6; font-weight:700;">TOTAL</p>
+                <h3 id="totalTxt" style="font-size:1.3rem;">Rp 0</h3>
+            </div>
+            <button onclick="checkout()" style="background:var(--primary); color:#fff; border:none; padding:12px 25px; border-radius:18px; font-weight:800;">Checkout</button>
+        </div>
+    </section>
+
+    <section id="accountView" class="view">
+        <div class="profile-card">
+            <div style="width:85px; height:85px; background:#fff; color:var(--primary); border-radius:28px; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:2.2rem; font-weight:800;" id="userIn">F</div>
+            <h2 id="profName" style="font-weight:800;">Fahry Elite</h2>
+            <p style="font-weight:600; opacity:0.9; font-size:0.9rem;">Platinum Member</p>
+        </div>
+
+        <div class="menu-list">
+            <div class="menu-item" onclick="openEditModal()">
+                <i class="fa-solid fa-user-pen"></i>
+                <span style="flex:1; font-weight:800;">Edit Profile Name</span>
+                <i class="fa-solid fa-chevron-right" style="color:#eee;"></i>
+            </div>
+            <div class="menu-item" onclick="openHistoryModal()">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span style="flex:1; font-weight:800;">Order History</span>
+                <i class="fa-solid fa-chevron-right" style="color:#eee;"></i>
+            </div>
+            <div class="menu-item" onclick="window.location.href='login.html'" style="color:var(--secondary);">
+                <i class="fa-solid fa-power-off" style="background:#fff1f1; color:var(--secondary);"></i>
+                <span style="font-weight:800;">Sign Out</span>
+            </div>
+        </div>
+    </section>
+
+    <nav>
+        <div class="nav-link active" id="btn-home" onclick="go('home')"><i class="fa-solid fa-house"></i></div>
+        <div class="nav-link" id="btn-cart" onclick="go('cart')"><i class="fa-solid fa-bag-shopping"></i></div>
+        <div class="nav-link" id="btn-account" onclick="go('account')"><i class="fa-solid fa-user"></i></div>
+    </nav>
+
+    <script>
+        // DATA 10 PRODUK LENGKAP
+        const dataProd = [
+            { id: 1, name: "Aero Max V.01", price: 2400000, img: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&q=80&w=400" },
+            { id: 2, name: "Zenith Watch", price: 4100000, img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=400" },
+            { id: 3, name: "Vapor Pods G3", price: 1250000, img: "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?auto=format&fit=crop&q=80&w=400" },
+            // PERBAIKAN: Menggunakan template nama file lokal agar Anda bisa ganti sendiri
+            { id: 4, name: "Lumina Lens", price: 900000, img: "gambar1.png" },
+            { id: 5, name: "Apex Stealth", price: 3200000, img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&q=80&w=400" },
+            { id: 6, name: "Nexus Cube", price: 550000, img: "https://images.unsplash.com/photo-1585298723682-7115561c51b7?auto=format&fit=crop&q=80&w=400" },
+            { id: 7, name: "Horizon Rim", price: 1850000, img: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&q=80&w=400" },
+            { id: 8, name: "Sonic Wave", price: 2700000, img: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&q=80&w=400" },
+            { id: 9, name: "Vision Neo", price: 5600000, img: "https://images.unsplash.com/photo-1508974239320-0a029497e820?auto=format&fit=crop&q=80&w=400" },
+            { id: 10, name: "Nova Gear", price: 1100000, img: "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?auto=format&fit=crop&q=80&w=400" }
+        ];
+
+        let currentU = localStorage.getItem('currentUser') || "Fahry";
+
+        function refreshUser() {
+            document.getElementById('displayUser').innerText = currentU;
+            document.getElementById('profName').innerText = currentU + " Elite";
+            document.getElementById('userIn').innerText = currentU.charAt(0).toUpperCase();
+        }
+
+        function render(arr) {
+            document.getElementById('mainGrid').innerHTML = arr.map(p => `
+                <div class="p-card" onclick="window.location.href='product.html?id=${p.id}'">
+                    <img src="${p.img}" onerror="this.src='https://via.placeholder.com/400?text=Image+Not+Found'">
+                    <div class="p-info">
+                        <h4 style="font-weight:800; font-size:0.95rem; margin-bottom:5px;">${p.name}</h4>
+                        <p style="color:var(--primary); font-weight:800; font-size:0.85rem;">Rp ${p.price.toLocaleString()}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- ELITE MODAL FUNCTIONS ---
+        const modal = document.getElementById('eliteModal');
+        const mBody = document.getElementById('modalBody');
+
+        function openEditModal() {
+            mBody.innerHTML = `
+                <h2 style="font-weight:800;">Edit Name</h2>
+                <input type="text" id="newName" class="modal-input" value="${currentU}">
+                <button class="btn-elite" onclick="saveName()">Save Changes</button>
+            `;
+            modal.style.display = 'flex';
+        }
+
+        function saveName() {
+            const n = document.getElementById('newName').value;
+            if(n) { currentU = n; localStorage.setItem('currentUser', n); refreshUser(); }
+            modal.style.display = 'none';
+        }
+
+        function openHistoryModal() {
+            const last = localStorage.getItem('lastOrder') || "No history found.";
+            mBody.innerHTML = `
+                <i class="fa-solid fa-clock-rotate-left" style="font-size:3rem; color:var(--primary); margin-bottom:15px;"></i>
+                <h2 style="font-weight:800;">Recent Order</h2>
+                <p style="margin:15px 0; font-weight:700; color:var(--gray);">${last}</p>
+                <button class="btn-elite" onclick="modal.style.display='none'">Close</button>
+            `;
+            modal.style.display = 'flex';
+        }
+
+        function checkout() {
+            window.location.href = 'checkout.html';
+        }
+
+        // --- SYSTEM FUNCTIONS ---
+        function doSearch() {
+            document.getElementById('searchOverlay').style.display = 'flex';
+            setTimeout(() => {
+                const val = document.getElementById('searchInp').value.toLowerCase();
+                render(dataProd.filter(x => x.name.toLowerCase().includes(val)));
+                document.getElementById('searchOverlay').style.display = 'none';
+            }, 500);
+        }
+
+        function go(v) {
+            document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+            document.getElementById(v + 'View').classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById('btn-'+v).classList.add('active');
+            if(v === 'cart') showCart();
+        }
+
+        function showCart() {
+            const bag = JSON.parse(localStorage.getItem('cart')) || [];
+            const list = document.getElementById('cartList');
+            const bar = document.getElementById('checkoutBar');
+            let tot = 0;
+            if(bag.length === 0) {
+                list.innerHTML = `<p style="text-align:center; padding-top:100px; color:var(--gray); font-weight:700;">Bag is empty.</p>`;
+                bar.style.display = 'none';
+            } else {
+                bar.style.display = 'flex';
+                list.innerHTML = bag.map((x, i) => {
+                    tot += x.price;
+                    return `<div style="display:flex; align-items:center; gap:15px; background:#fff; padding:15px; border-radius:25px; margin-bottom:15px;">
+                        <img src="${x.img}" style="width:60px; height:60px; border-radius:15px;" onerror="this.src='https://via.placeholder.com/60?text=Err'">
+                        <div style="flex:1;"><h4 style="font-weight:800;">${x.name}</h4><p style="color:var(--primary); font-weight:800;">Rp ${x.price.toLocaleString()}</p></div>
+                        <i class="fa-solid fa-trash" style="color:var(--secondary);" onclick="del(${i})"></i>
+                    </div>`;
+                }).join('');
+                document.getElementById('totalTxt').innerText = "Rp " + tot.toLocaleString();
+            }
+        }
+
+        function del(i) {
+            let bag = JSON.parse(localStorage.getItem('cart'));
+            bag.splice(i, 1);
+            localStorage.setItem('cart', JSON.stringify(bag));
+            showCart();
+        }
+
+        // Init
+        refreshUser();
+        render(dataProd);
+    </script>
+</body>
+</html>
