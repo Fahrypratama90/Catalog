@@ -30,7 +30,6 @@
             overflow: hidden;
         }
 
-        /* Background Decor */
         .blob {
             position: absolute; width: 350px; height: 350px;
             background: var(--primary); filter: blur(120px);
@@ -42,7 +41,6 @@
             50% { transform: translate(-30px, 30px) scale(1.1); }
         }
 
-        /* Card Styling */
         .register-card {
             width: 90%;
             max-width: 420px;
@@ -79,7 +77,6 @@
             margin-bottom: 35px;
         }
 
-        /* Input Styling */
         .input-group {
             margin-bottom: 18px;
             text-align: left;
@@ -117,7 +114,6 @@
             transform: translateY(-2px);
         }
 
-        /* Button Styling */
         .btn-register {
             width: 100%;
             padding: 20px;
@@ -133,24 +129,11 @@
             transition: 0.3s;
         }
 
-        .btn-register:active {
-            transform: scale(0.95);
-        }
+        .btn-register:active { transform: scale(0.95); }
 
-        .footer-links {
-            margin-top: 25px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--text-gray);
-        }
+        .footer-links { margin-top: 25px; font-size: 0.9rem; font-weight: 700; color: var(--text-gray); }
+        .footer-links a { color: var(--primary); text-decoration: none; margin-left: 5px; }
 
-        .footer-links a {
-            color: var(--primary);
-            text-decoration: none;
-            margin-left: 5px;
-        }
-
-        /* Message Box */
         .status-msg {
             padding: 12px;
             border-radius: 15px;
@@ -161,7 +144,6 @@
         }
         .error { background: #fff1f1; color: #ff4d4d; border: 1px solid #ffeded; }
         .success { background: #f1fff6; color: #2ecc71; border: 1px solid #e8fdf0; }
-
     </style>
 </head>
 <body>
@@ -175,88 +157,96 @@
 
         <div id="msgBox" class="status-msg"></div>
 
-        <form id="regForm" onsubmit="event.preventDefault(); handleSignUp();">
-            <div class="input-group">
-                <label>Full Name</label>
-                <input type="text" id="regName" placeholder="Your Name" required>
-            </div>
+        <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" id="regName" placeholder="Your Name">
+        </div>
 
-            <div class="input-group">
-                <label>Email Address</label>
-                <input type="email" id="regEmail" placeholder="name@example.com" required>
-            </div>
+        <div class="input-group">
+            <label>Email Address</label>
+            <input type="email" id="regEmail" placeholder="name@example.com">
+        </div>
 
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="regPass" placeholder="••••••••" required>
-            </div>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="regPass" placeholder="••••••••">
+        </div>
 
-            <button type="submit" class="btn-register" id="btnReg">Register Now</button>
-        </form>
+        <button class="btn-register" onclick="handleSignUp()" id="btnReg">Register Now</button>
 
         <div class="footer-links">
             Already have an account? <a href="login.html">Sign In</a>
         </div>
     </div>
 
-    <script>
-        // --- LOGIKA DATABASE (IndexedDB) ---
-        let db;
-        const dbReq = indexedDB.open("EliteUniverseDB", 1);
+    <script type="module">
+        // --- INTEGRASI FIREBASE ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        dbReq.onupgradeneeded = (e) => {
-            db = e.target.result;
-            if (!db.objectStoreNames.contains("users")) {
-                db.createObjectStore("users", { keyPath: "email" });
-            }
+        const firebaseConfig = {
+            apiKey: "AIzaSyCMXAHOZTLKZakFNcS1h6qwbSjzIuLqTCY",
+            authDomain: "catalog-19c63.firebaseapp.com",
+            projectId: "catalog-19c63",
+            storageBucket: "catalog-19c63.firebasestorage.app",
+            messagingSenderId: "635781678036",
+            appId: "1:635781678036:web:f0124efd1523de71ee8c41"
         };
 
-        dbReq.onsuccess = (e) => { db = e.target.result; };
-        dbReq.onerror = () => { console.error("Database failed to load"); };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
-        function handleSignUp() {
+        window.handleSignUp = async () => {
             const name = document.getElementById('regName').value;
             const email = document.getElementById('regEmail').value;
             const pass = document.getElementById('regPass').value;
-            const msgBox = document.getElementById('msgBox');
             const btn = document.getElementById('btnReg');
-
-            // Reset Message
-            msgBox.style.display = 'none';
 
             if (!name || !email || !pass) {
                 showStatus("Please fill all fields!", "error");
                 return;
             }
 
-            const transaction = db.transaction(["users"], "readwrite");
-            const store = transaction.objectStore("users");
-
-            const newUser = { name, email, pass };
-            const request = store.add(newUser);
+            if (pass.length < 6) {
+                showStatus("Password minimal 6 karakter!", "error");
+                return;
+            }
 
             btn.innerText = "Processing...";
             btn.disabled = true;
 
-            request.onsuccess = () => {
+            try {
+                // 1. Buat User baru di Firebase
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                
+                // 2. Simpan Nama ke Profil Firebase
+                await updateProfile(userCredential.user, { displayName: name });
+
                 showStatus("Success! Account created.", "success");
                 setTimeout(() => {
                     window.location.href = 'login.html';
                 }, 1500);
-            };
-
-            request.onerror = () => {
-                showStatus("Email already registered!", "error");
+            } catch (error) {
                 btn.innerText = "Register Now";
                 btn.disabled = false;
-            };
-        }
+                showStatus(translateError(error.code), "error");
+            }
+        };
 
         function showStatus(text, type) {
             const msgBox = document.getElementById('msgBox');
             msgBox.innerText = text;
             msgBox.className = `status-msg ${type}`;
             msgBox.style.display = 'block';
+        }
+
+        function translateError(code) {
+            switch(code) {
+                case 'auth/email-already-in-use': return 'Email sudah terdaftar!';
+                case 'auth/invalid-email': return 'Format email salah!';
+                case 'auth/weak-password': return 'Password terlalu lemah!';
+                default: return 'Gagal mendaftar. Coba lagi.';
+            }
         }
     </script>
 </body>
