@@ -65,6 +65,7 @@
             background: linear-gradient(45deg, var(--primary), var(--secondary), var(--primary));
             background-size: 200% auto; -webkit-background-clip: text;
             -webkit-text-fill-color: transparent; animation: shine 3s linear infinite;
+            transition: opacity 0.5s;
         }
 
         @keyframes shine { to { background-position: 200% center; } }
@@ -94,7 +95,7 @@
         .footer-links { margin-top: 30px; font-size: 0.9rem; font-weight: 700; color: var(--text-gray); }
         .footer-links a { color: var(--primary); text-decoration: none; cursor: pointer; }
 
-        #loginMsg { color: #ff4d4d; font-size: 0.8rem; font-weight: 700; margin-top: 10px; display: none; }
+        #loginMsg { color: #ff4d4d; font-size: 0.8rem; font-weight: 700; margin-top: 10px; display: none; padding: 0 10px; }
         .success { color: #2ecc71 !important; }
     </style>
 </head>
@@ -126,30 +127,41 @@
         </div>
     </div>
 
-    <script>
-        // --- KONEKSI DATABASE (Sama dengan Register) ---
-        let db;
-        const request = indexedDB.open("EliteUniverseDB", 1);
-        request.onsuccess = (e) => { db = e.target.result; };
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCMXAHOZTLKZakFNcS1h6qwbSjzIuLqTCY",
+            authDomain: "catalog-19c63.firebaseapp.com",
+            projectId: "catalog-19c63",
+            storageBucket: "catalog-19c63.firebasestorage.app",
+            messagingSenderId: "635781678036",
+            appId: "1:635781678036:web:f0124efd1523de71ee8c41"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
         // Animasi Teks Judul
         const words = ["Hello.", "Welcome.", "Catalog."];
         let index = 0;
         setInterval(() => {
             const textEl = document.getElementById('changingText');
-            textEl.style.opacity = 0;
-            setTimeout(() => {
-                index = (index + 1) % words.length;
-                textEl.innerText = words[index];
-                textEl.style.opacity = 1;
-            }, 500);
+            if(textEl) {
+                textEl.style.opacity = 0;
+                setTimeout(() => {
+                    index = (index + 1) % words.length;
+                    textEl.innerText = words[index];
+                    textEl.style.opacity = 1;
+                }, 500);
+            }
         }, 3000);
 
-        // Logika Login Verifikasi ke IndexedDB
-        function handleLogin() {
+        // Fungsi Login Firebase
+        window.handleLogin = async () => {
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPass').value;
-            const msg = document.getElementById('loginMsg');
             const btn = document.querySelector('.btn-login');
 
             if(!email || !pass) {
@@ -157,28 +169,35 @@
                 return;
             }
 
-            const transaction = db.transaction(["users"], "readonly");
-            const store = transaction.objectStore("users");
-            const getReq = store.get(email);
+            btn.innerText = "Authenticating...";
+            btn.disabled = true;
 
-            getReq.onsuccess = () => {
-                const user = getReq.result;
-                if(user && user.pass === pass) {
-                    btn.innerText = "Authenticating...";
-                    showMsg("Login Successful!", "success");
-                    localStorage.setItem('currentUser', user.name);
-                    setTimeout(() => { window.location.href = 'main.html'; }, 1500);
-                } else {
-                    showMsg("Invalid email or password!", "error");
-                }
-            };
-        }
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                showMsg("Login Successful!", "success");
+                setTimeout(() => { window.location.href = 'main.html'; }, 1200);
+            } catch (error) {
+                btn.innerText = "Sign In";
+                btn.disabled = false;
+                showMsg(translateError(error.code), "error");
+            }
+        };
 
         function showMsg(text, type) {
             const msg = document.getElementById('loginMsg');
             msg.innerText = text;
             msg.style.display = 'block';
             msg.className = type === 'success' ? 'success' : '';
+        }
+
+        function translateError(code) {
+            switch(code) {
+                case 'auth/user-not-found': return 'Email not registered!';
+                case 'auth/wrong-password': return 'Wrong password!';
+                case 'auth/invalid-email': return 'Invalid email format!';
+                case 'auth/invalid-credential': return 'Invalid email or password!';
+                default: return 'Authentication failed!';
+            }
         }
     </script>
 </body>
